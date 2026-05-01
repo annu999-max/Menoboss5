@@ -27,7 +27,7 @@ exports.handler = async function (event) {
   }
 
   try {
-    const { email, name, successUrl, cancelUrl } = JSON.parse(event.body || '{}');
+    const { email, name, successUrl, cancelUrl, includeCoach } = JSON.parse(event.body || '{}');
 
     if (!email || !successUrl || !cancelUrl) {
       return {
@@ -46,11 +46,19 @@ exports.handler = async function (event) {
       'line_items[0][price_data][currency]': 'nzd',
       'line_items[0][price_data][unit_amount]': '1499',
       'line_items[0][price_data][product_data][name]': 'MenoBoss Individually Tailored Health Report',
-      'metadata[client_email]': email
+      'metadata[client_email]': email,
+      'metadata[include_coach]': includeCoach ? 'yes' : 'no'
     });
 
     if (name) {
       params.append('metadata[client_name]', name);
+    }
+
+    if (includeCoach) {
+      params.append('line_items[1][quantity]', '1');
+      params.append('line_items[1][price_data][currency]', 'nzd');
+      params.append('line_items[1][price_data][unit_amount]', '2500');
+      params.append('line_items[1][price_data][product_data][name]', 'Meet with your coach online (discounted add-on)');
     }
 
     const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
