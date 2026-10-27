@@ -44,7 +44,7 @@ exports.handler = async function (event) {
       customer_email: email,
       'line_items[0][quantity]': '1',
       'line_items[0][price_data][currency]': 'nzd',
-      'line_items[0][price_data][unit_amount]': '1499',
+      'line_items[0][price_data][unit_amount]': '2499',
       'line_items[0][price_data][product_data][name]': 'MenoBoss Individually Tailored Health Report',
       'metadata[client_email]': email,
       'metadata[include_coach]': includeCoach ? 'yes' : 'no'
