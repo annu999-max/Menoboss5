@@ -177,7 +177,7 @@ body{font-family:var(--font-sans,system-ui,sans-serif);max-width:680px;margin:0 
   <p class="land-desc">This clinical-grade assessment maps what's happening across your body, brain, and hormones — real answers, not guesswork. Takes 4 minutes.</p>
   <div class="pills"><span class="pill pt">23 evidence-based symptoms</span><span class="pill pp">7 body systems</span><span class="pill ppu">Free assessment</span></div>
   <button class="btn btn-t btn-w" onclick="goTo('intake')">Begin your assessment</button>
-  <p style="font-size:12px;color:var(--color-text-secondary,#888);margin-top:1.25rem;line-height:1.6">Individually tailored report available for NZ$14.99</p>
+  <p style="font-size:12px;color:var(--color-text-secondary,#888);margin-top:1.25rem;line-height:1.6">Individually tailored report available for NZ$24.99</p>
 </div>
 </div>
 
@@ -244,7 +244,7 @@ body{font-family:var(--font-sans,system-ui,sans-serif);max-width:680px;margin:0 
         <div class="feat"><div class="feat-dot" style="background:var(--p)"></div><span>Holistic &amp; energy healing protocols</span></div>
         <div class="feat"><div class="feat-dot" style="background:var(--pu)"></div><span>90-day roadmap + next-step coaching options</span></div>
       </div>
-      <div class="price">NZ$14.99 <span>· expert-reviewed and emailed within 36 hours</span></div>
+      <div class="price">NZ$24.99 <span>· expert-reviewed and emailed within 36 hours</span></div>
       <button class="btn btn-pu btn-w" onclick="goTo('payment')">Unlock my full report</button>
       <p style="margin-top:10px"><button class="btn btn-ol" onclick="goTo('sample')">See a sample report first</button></p>
     </div>
@@ -275,8 +275,8 @@ body{font-family:var(--font-sans,system-ui,sans-serif);max-width:680px;margin:0 
       </div>
     </div>
     <div style="max-width:320px;margin:0 auto 1rem;text-align:center">
-      <div id="checkout-total" style="font-size:14px;color:var(--color-text-secondary,#666);margin-bottom:8px">Your total today: NZ$14.99</div>
-      <button id="pay-button" class="btn btn-w" style="background:#635bff;border-radius:6px;color:#fff;font-size:15px;max-width:320px" onclick="startCheckout()">Pay NZ$14.99 — Powered by Stripe</button>
+      <div id="checkout-total" style="font-size:14px;color:var(--color-text-secondary,#666);margin-bottom:8px">Your total today: NZ$24.99</div>
+      <button id="pay-button" class="btn btn-w" style="background:#635bff;border-radius:6px;color:#fff;font-size:15px;max-width:320px" onclick="startCheckout()">Pay NZ$24.99 — Powered by Stripe</button>
       <p style="font-size:10px;color:var(--color-text-secondary,#aaa);margin-top:7px">🔒 Visa, Mastercard, Apple Pay, Google Pay</p>
     </div>
     <div class="confirm-box" style="max-width:380px;margin:0 auto 1rem">
@@ -343,7 +343,7 @@ body{font-family:var(--font-sans,system-ui,sans-serif);max-width:680px;margin:0 
         <p style="font-size:11px;color:#7a5a9a;margin-top:.75rem">menobossglobal.com · No obligation · 30 minutes</p>
       </div></div>
     <div class="disc">Sample only. Not medical advice. MenoBoss Global · menobossglobal.com</div>
-    <div style="text-align:center;margin-top:1.5rem"><button class="btn btn-pu btn-w" onclick="goTo('payment')">Unlock my tailored report — NZ$14.99</button><br><button class="back-btn" onclick="goTo('results')">← Back to my results</button></div>
+    <div style="text-align:center;margin-top:1.5rem"><button class="btn btn-pu btn-w" onclick="goTo('payment')">Unlock my tailored report — NZ$24.99</button><br><button class="back-btn" onclick="goTo('results')">← Back to my results</button></div>
   </div>
 </div>
 
@@ -353,7 +353,7 @@ const EJS_PUBLIC_KEY   = 'YOUR_PUBLIC_KEY';
 const EJS_SERVICE_ID   = 'YOUR_SERVICE_ID';
 const EJS_CLIENT_TPL   = 'YOUR_CLIENT_TEMPLATE_ID';
 const EJS_MENOBOSS_TPL = 'YOUR_MENOBOSS_TEMPLATE_ID';
-const MENOBOSS_EMAIL   = 'info@menobossglobal.com';
+const MENOBOSS_EMAIL   = 'hello@menobossglobal.com';
 /* ─────────────────────────────────────────────────────────────── */
 
 const SYMS=[
@@ -654,7 +654,7 @@ function openCheckoutUrl(url){
 function updateCheckoutSummary(){
   includeCoachAddOn=!!document.getElementById('coach-add-on')?.checked;
   sessionStorage.setItem('menoboss_coach_add_on',includeCoachAddOn?'yes':'no');
-  const total=includeCoachAddOn?'39.99':'14.99';
+  const total=includeCoachAddOn?'49.99':'24.99';
   const totalEl=document.getElementById('checkout-total');
   const payBtn=document.getElementById('pay-button');
   if(totalEl) totalEl.textContent=`Your total today: NZ$${total}`;
@@ -945,13 +945,17 @@ async function sendEmails(total,cnt,severity){
       })
     });
 
+    const data=await resp.json();
     if(resp.ok){
-      if(statusEl) statusEl.innerHTML=`<div class="email-status email-ok">✓ Thank you. We have received your assessment and payment${includeCoachAddOn?' plus your discounted coach session add-on':''}. Your individually tailored report will be emailed to ${userData.email||'you'} within 36 hours.</div>`;
+      const confirmationNote=data.clientConfirmationSent
+        ? ` A confirmation email has been sent to ${userData.email||'you'}.`
+        : '';
+      if(statusEl) statusEl.innerHTML=`<div class="email-status email-ok">✓ Thank you. We have received your assessment and payment${includeCoachAddOn?' plus your discounted coach session add-on':''}. Your individually tailored report will be emailed to ${userData.email||'you'} within 36 hours.${confirmationNote}</div>`;
     }else{
-      if(statusEl) statusEl.innerHTML=`<div class="email-status email-fail">We have your payment, but the confirmation email step did not complete cleanly. Please email info@menobossglobal.com with your name and we will make sure your report is delivered within 36 hours.</div>`;
+      if(statusEl) statusEl.innerHTML=`<div class="email-status email-fail">We have your payment, but the confirmation email step did not complete cleanly. Please email hello@menobossglobal.com with your name and we will make sure your report is delivered within 36 hours.</div>`;
     }
   }catch(err){
-    if(statusEl) statusEl.innerHTML=`<div class="email-status email-fail">We have your payment, but the confirmation email step hit a snag. Please email info@menobossglobal.com with your name and we will make sure your report is delivered within 36 hours.</div>`;
+    if(statusEl) statusEl.innerHTML=`<div class="email-status email-fail">We have your payment, but the confirmation email step hit a snag. Please email hello@menobossglobal.com with your name and we will make sure your report is delivered within 36 hours.</div>`;
   }
 }
 
